@@ -1,4 +1,4 @@
-
+import java.util.*; 
 
 public class BinarySearchTree{
     Node root;
@@ -134,7 +134,10 @@ public class BinarySearchTree{
         Node cur = this.root;
         boolean notInserted = true;
         if(this.root == null){
-            this.root = new Node(data);
+            Node root = new Node(data);
+            root.parent = null;
+            this.root = root;
+            notInserted = false;
         }
         while(notInserted){
             //traverse tree
@@ -142,7 +145,9 @@ public class BinarySearchTree{
                 //go right
                 if(cur.right == null){
                     //insert
-                    cur.right = new Node(data);
+                    Node rightInsert = new Node(data);
+                    rightInsert.parent = cur;
+                    cur.right = rightInsert;
                     notInserted = false;
                 }else{
                     //update current
@@ -153,7 +158,9 @@ public class BinarySearchTree{
                 //go left
                 if(cur.left == null){
                     //insert
-                    cur.left = new Node(data);
+                    Node leftInsert = new Node(data);
+                    leftInsert.parent = cur;
+                    cur.left = leftInsert;
                     notInserted = false;
                 }else{
                     //update current
@@ -166,135 +173,128 @@ public class BinarySearchTree{
     }
 
     public void deleteIter(int data){
-        //TODO: Case 3 not working
-        boolean notFound = true;
         Node cur = this.root;
-        Node prev = this.root;
-
-        while(notFound){
+        //find Node to delete
+        while(true){
+            //traverse tree 
             if(cur.data == data){
-                //found
-                if(cur.left == null && cur.right == null){
-                    //case 1: Node to delete is leaf
-                    if(prev.left == null){
-                        //right leaf to delete
-                        prev.right = null;
-                    }else{
-                        //left leaf to delete
-                        prev.left = null;
-                    }
-                    cur = null;
-                    notFound = false;
-                }else if(cur.left == null || cur.right == null){
-                    //case 2: node to delete has one child
-                    if(cur.left != null){
-                        //has left child
-                        prev.left = cur.left;
-                        cur.left = null;
-                        notFound = false;
-                    }else{
-                        //has right child
-                        prev.right = cur.right;
-                        cur.right = null;
-                        notFound = false;
-                    }
-                }else{
-                    //case 3: node has two children and we need to find inorder successor
-                    Node successor = cur.right;
-                    if(successor.left != null){
-                        //traverse left till at lowest node for successor
-                        while(successor.left != null){
-                            prev = successor;
-                            successor = successor.left;
-                        }
-                        successor.left = cur.left;
-                        successor.right = cur.right;
-                        prev.left = null;
-                        notFound = false;
+                //found 
+                break;
 
-                    }else{
-                        //succesor is right node
-                        successor = cur.right;
-                        successor.left = cur.left;
-                        successor.right = successor.right;
-                        cur = successor;
-                        notFound = false;
-                    }
-                }
             }else{
-                //else traverse
+
                 if(cur.data > data){
-                    //go left
-                    prev = cur;
                     cur = cur.left;
-                }
-                if(cur.data < data){
-                    //go right
-                    prev = cur;
+                }else if(cur.data < data) {
                     cur = cur.right;
                 }
             }
+        }
+        if(cur.left == null){
+            transplantNode(cur, cur.right);
+        }else if(cur.right == null){
+            transplantNode(cur, cur.left);
+        }else{
+            Node min = findMinIter(cur.right);
+            if(min.parent.data != cur.data){
+                transplantNode(min, min.right);
+                min.right = cur.right;
+                min.right.parent = min;
+            }
+            transplantNode(cur, min);
+            min.left = cur.left;
+            min.left.parent = min;
+        }
+      
+    }
 
-            
+    private void transplantNode(Node u, Node v){
+        if(u.parent == null){
+            //replace root with v
+            this.root = v;
+        }else if(u.data == u.parent.left.data){
+            u.parent.left = v;
+        }else{
+            u.parent.right = v;
+        }
+        if(v != null){
+            v.parent = u.parent;
         }
     }
-    public void findNextIter(int data){
+
+    public Node findNextIter(int data){
         boolean notFound = true;
         Node cur = this.root;
-        Node prev = this.root;
+        ArrayList<Node> memo = new ArrayList<Node>();
 
         while(notFound){
+            //traverse tree
             if(cur.data == data){
                 //found
-                if(cur.right == null){
-                    System.out.println("Next value iter : " + prev.data);
-                    notFound = false;
-                }else{
-                    System.out.println("Next Value iter : " + cur.right.data);
-                    notFound = false;
-                }
+                notFound = false;
             }
+            memo.add(cur);
+
             if(cur.data > data){
-                //go left
-                prev = cur;
                 cur = cur.left;
-            }else{
-                //go right
-                prev = cur;
+            }else if(cur.data < data){
                 cur = cur.right;
             }
         }
+        
+        if(cur.right == null){
+            //next in memo or DNE
+            if(memo.get(memo.size()-2).data > data){
+                return memo.get(memo.size()-2);
+            }
+        }else{
+            return findMinIter(cur.right);
+        }
+        //return DNE
+        Node dne = new Node(0);
+        return dne;
     }
-    public void findPrevIter(int data){
+    public Node findPrevIter(int data){
+        
         boolean notFound = true;
         Node cur = this.root;
-        Node prev = this.root;
-
+        ArrayList<Node> memo = new ArrayList<Node>();
+        
         while(notFound){
+            //traverse tree
             if(cur.data == data){
-                //found
-                if(cur.left == null){
-                    System.out.println("Prev value iter : " + prev.data);
-                    notFound = false;
-                }else{
-                    System.out.println("Next value iter : " + cur.left.data);
-                    notFound = false;
-                }
+                //found 
+                notFound = false;
             }
+            memo.add(cur);
+        
             if(cur.data > data){
-                //go left
-                prev = cur;
                 cur = cur.left;
-            }else{
-                //go right
-                prev = cur;
+            }else if(cur.data < data){
                 cur = cur.right;
             }
         }
+
+        if(cur.left == null){
+            //prev in memo or DNE
+            Node tmp;
+            for(int i = memo.size()-1; i >= 0; i-- ){
+                tmp = memo.get(i);
+                if(tmp.data < data){
+                    return tmp;
+                }
+            }
+        }else{
+            return findMaxIter(cur.left);
+        }   
+        //return DNE
+        Node dne = new Node(0);
+        return dne;
+        
     }
 
-    public void findMinIter(){
-        Node cur = this.root;
+    public Node findMinIter(Node root){
+        Node cur = root;
         
         if(cur == null){
             System.out.println("Tree empty");
@@ -302,11 +302,11 @@ public class BinarySearchTree{
         while(cur.left != null){
             cur = cur.left;
         }
-        System.out.println("Min val iter: " + cur.data);
+        return cur;
 
     }
-    public void findMaxIter(){
-        Node cur = this.root;
+    public Node findMaxIter(Node root){
+        Node cur = root;
 
         if(cur == null){
             System.out.println("Tree empty");
@@ -314,7 +314,7 @@ public class BinarySearchTree{
         while(cur.right != null){
             cur = cur.right;
         }
-        System.out.println("Max val iter: "+ cur.data);
+        return cur;
     }
 
     public void inorder(Node root){
