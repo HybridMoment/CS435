@@ -2,6 +2,7 @@ import java.util.*;
 
 public class BinarySearchTree{
     Node root;
+    int levelCounter = 0;
 
     //constructor for BinarySearchTree Class
     BinarySearchTree(int data){
@@ -143,6 +144,10 @@ public class BinarySearchTree{
             //traverse tree
             if(cur.data < data){
                 //go right
+
+                //added for question 6
+                this.levelCounter = this.levelCounter + 1;
+
                 if(cur.right == null){
                     //insert
                     Node rightInsert = new Node(data);
@@ -156,6 +161,10 @@ public class BinarySearchTree{
             }
             if(cur.data > data){
                 //go left
+
+                //added for question 6
+                this.levelCounter = this.levelCounter + 1;
+                
                 if(cur.left == null){
                     //insert
                     Node leftInsert = new Node(data);
@@ -168,7 +177,7 @@ public class BinarySearchTree{
                 }
             }
         }
-        System.out.println("INSERT ITER : " + data);
+        //System.out.println("INSERT ITER : " + data);
 
     }
 
@@ -209,6 +218,7 @@ public class BinarySearchTree{
     }
 
     private void transplantNode(Node u, Node v){
+        
         if(u.parent == null){
             //replace root with v
             this.root = v;
@@ -220,6 +230,7 @@ public class BinarySearchTree{
         if(v != null){
             v.parent = u.parent;
         }
+        
     }
 
     public Node findNextIter(int data){

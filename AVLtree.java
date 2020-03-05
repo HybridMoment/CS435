@@ -2,6 +2,7 @@ import java.util.*;
 
 public class AVLtree{
     Node root;
+    int levelCounter = 0;
 
     AVLtree(int data){
         this.root = new Node(data);
@@ -21,6 +22,10 @@ public class AVLtree{
             //traverse tree
             if(cur.data < data){
                 //go right
+
+                //added for Question 6
+                this.levelCounter = this.levelCounter + 1;
+
                 if(cur.right == null){
                     //insert
                     Node rightInsert = new Node(data);
@@ -41,6 +46,10 @@ public class AVLtree{
             }
             if(cur.data > data){
                 //go left
+
+                //added for question 6
+                this.levelCounter = this.levelCounter + 1;
+                
                 if(cur.left == null){
                     //insert
                     Node leftInsert = new Node(data);
@@ -110,15 +119,15 @@ public class AVLtree{
             leftRightRotation(cur);
         }else if( cur.balanceFactor >= 2 && cur.left.balanceFactor == 1){
             //needs Right rotation
-            System.out.println("CALLING RIGHT ROTATION");
+            //System.out.println("CALLING RIGHT ROTATION");
             rightRotation(cur);
         }else if(cur.balanceFactor <= -2 && cur.right.balanceFactor == 1){
             //needs Right-Left rotation
-            System.out.println("CALLING RIGHT LEFT ROTAION");
+            //System.out.println("CALLING RIGHT LEFT ROTAION");
             rightLeftRoatation(cur);
         }else if(cur.balanceFactor <= -2 && cur.right.balanceFactor == -1){
             // needs Left rotation
-            System.out.println("CALLING LEFT ROTATION");
+            //System.out.println("CALLING LEFT ROTATION");
             leftRotation(cur);
         }
        
@@ -300,7 +309,7 @@ public class AVLtree{
     }
 
     private void leftRightRotation(Node cur){
-        System.out.println("IN LEFT RIGHT ROTATION");
+        //System.out.println("IN LEFT RIGHT ROTATION");
         Node next = cur.left;
         Node a, b, c, subtreeTwo, subtreeOne;
         int curData = cur.data;
