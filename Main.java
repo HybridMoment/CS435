@@ -10,10 +10,10 @@ public class Main{
         int randomNum;
 
         for(int i = 0; i < n; i++){
-            randomNum = randNumberGen.nextInt(n);
+            randomNum = randNumberGen.nextInt(n) + 1;
             while(randomNumberHash.contains(randomNum)){
                 //generate new number
-                randomNum = randNumberGen.nextInt(n);
+                randomNum = randNumberGen.nextInt(n) + 1;
             }
             arr[i] = randomNum;
             //update hash 
@@ -31,9 +31,11 @@ public class Main{
             arr[i] = n;
             n = n -1;
         }
-        return arr;
         //System.out.println(Arrays.toString(arr));
+        return arr;
+        
     }
+
     public static void main(String[] args){
 
             Main myMain = new Main();
@@ -44,48 +46,76 @@ public class Main{
             boolean DEBUG_ITER_AVL = false;
             boolean DEBUG_RAN_ARRAY = true;
 
+            
+
             if(DEBUG_RAN_ARRAY){
-                boolean questionFivePartA = false;
-                boolean questionFivePartB = false;
-                boolean questionFivePartC = false;
-                boolean questionSixPartB = false;
+                boolean questionFivePartA = true;
+                boolean questionFivePartB = true;
+                boolean questionFivePartC = true;
+                boolean questionSixPartB = true;
                 boolean questionSixPartC = true;
 
                 /* 
                     This will portion handles Question 5 and 6 problems
                 */
                 if(questionFivePartA){
-                    //BinarySearchTree myBST = new BinarySearchTree(giantArray[0]);
+                    
                     //(Part A)
                     int giantArray[] = myMain.getRandomArray(10000);
                     AVLtree myAVL = new AVLtree(giantArray[0]);
-                    //BinarySearchTree myBST = new BinarySearchTree(giantArray[0]);
-                    final long startTime = System.currentTimeMillis();
-                    for(int i = 1; i < giantArray.length -1; i++){
-                        myAVL.insertIter(giantArray[i]);
-                        //myBST.insert(giantArray[i]);
+                    BinarySearchTree myBST = new BinarySearchTree(giantArray[0]);
+
+                    System.out.println("Printing results, question 5 Part A... (array 10000)");
+                    //timing AVL insertions for question 5 part A
+                    final long startTimeAVL = System.currentTimeMillis();
+                    
+                    for(int i = 1; i < giantArray.length; i++){
+
+                        myAVL.insertIter(giantArray[i]); //iterative insert
+                        
                     }
-                    final long endTime = System.currentTimeMillis();
-                    System.out.println("Total time = " + (endTime - startTime));
-                
-                    //myAVL.inorder(myAVL.root);
-                    //System.out.println(" ");
-                    //myBST.inorder(myBST.root);
+                    
+                    final long endTimeAVL = System.currentTimeMillis();
+                    System.out.println(" Total time AVL = " + (endTimeAVL - startTimeAVL));
+
+                    //timing BST insertions for question 5 part A
+                    final long startTimeBST = System.currentTimeMillis();
+                    for(int i = 1; i < giantArray.length; i++){
+        
+                        myBST.insert(giantArray[i]); //recursive insert
+
+                    }
+                    final long endTimeBST = System.currentTimeMillis();
+                    System.out.println(" To time recursive BST inserts = " + (endTimeBST - startTimeBST));                    
+                    System.out.println(" ");
+
                 }
                 
                 if(questionFivePartB){
                     //(Part B)
-                    int smallArray[] = myMain.getRandomArray(25);
-                    //AVLtree smallAVL = new AVLtree(smallArray[0]);
+                    int smallArray[] = myMain.getRandomArray(10);
+                    AVLtree smallAVL = new AVLtree(smallArray[0]);
                     BinarySearchTree smallBST = new BinarySearchTree(smallArray[0]);
 
-                    final long smallStartTime = System.currentTimeMillis();
-                    for(int i = 1; i < smallArray.length -1; i++){
-                        //smallAVL.insertIter(smallArray[i]);
-                        smallBST.insert(smallArray[i]);
+                    System.out.println("Printing results, question 5 Part B...(array 10)");
+                    final long smallStartTimeAVL = System.currentTimeMillis();
+                    for(int i = 1; i < smallArray.length; i++){
+                        
+                        smallAVL.insertIter(smallArray[i]);
+
                     }
-                    final long smallEndTime = System.currentTimeMillis();
-                    System.out.println("Total time small array = " + (smallEndTime - smallStartTime));
+                    final long smallEndTimeAVL = System.currentTimeMillis();
+                    System.out.println(" Total time small array AVL = " + (smallEndTimeAVL - smallStartTimeAVL));
+
+                    final long smallStartTimeBST = System.currentTimeMillis();
+                    for(int i = 1; i < smallArray.length; i++){
+                        
+                        smallBST.insert(smallArray[i]);
+
+                    }
+                    final long smallEndTimeBST = System.currentTimeMillis();
+                    System.out.println(" Total time small array BST = " + (smallEndTimeBST - smallStartTimeBST));
+                    System.out.println(" ");
                 }
                 
                 
@@ -93,17 +123,31 @@ public class Main{
                     //(Part c)
                     //BST outperforms AVL
                     int[] giantArrayIter = myMain.getRandomArray(10000);
-                    //AVLtree giantAVLiter = new AVLtree(giantArrayIter[0]);
+                    AVLtree giantAVLiter = new AVLtree(giantArrayIter[0]);
                     BinarySearchTree giantBSTiter = new BinarySearchTree(giantArrayIter[0]);
 
-                    final long iterStartTime = System.currentTimeMillis();
-                    for(int i = 1; i < giantArrayIter.length -1; i++){
-                        giantBSTiter.insertIter(giantArrayIter[i]);
-                        //giantAVLiter.insertIter(giantArrayIter[i]);
+                    System.out.println("Pringting results, question 5 Part C...(array 10000)");
+                    final long iterStartTimeAVL = System.currentTimeMillis();
+                    
+                    for(int i = 1; i < giantArrayIter.length; i++){
+                        
+                        giantAVLiter.insertIter(giantArrayIter[i]);
+
                     }
-                    final long iterEndTime = System.currentTimeMillis();
-                    System.out.println("Total time Large iterative = " + (iterEndTime - iterStartTime));
-                
+                    
+                    final long iterEndTimeAVL = System.currentTimeMillis();
+                    System.out.println(" Total time 10000 iterative AVL = " + (iterEndTimeAVL - iterStartTimeAVL));
+
+                    final long iterStartTimeBST = System.currentTimeMillis();
+                    for(int i = 1; i < giantArrayIter.length; i++){
+
+                        giantBSTiter.insertIter(giantArrayIter[i]);
+
+                    }
+                    final long iterEndTimeBST = System.currentTimeMillis();
+                    System.out.println(" Total time 10000 iterative BST = " + (iterEndTimeBST - iterStartTimeBST));
+                    System.out.println(" ");
+
                 }
                 
 
@@ -113,18 +157,23 @@ public class Main{
                 if(questionSixPartB){
                     //(Part b)
                     int[] giantArrayLevelCount = myMain.getRandomArray(10000);
+                   
                     AVLtree giantAvlLevelCount = new AVLtree(giantArrayLevelCount[0]);
                     BinarySearchTree giantBstLevelCount = new BinarySearchTree(giantArrayLevelCount[0]);
 
-                    final long levelCountStartTime = System.currentTimeMillis();
-                    for(int i = 1; i < giantArrayLevelCount.length -1; i++){
-                        giantBstLevelCount.insertIter(giantArrayLevelCount[i]);
+                    System.out.println("Printing results, question 6 Part B...(array 10000) level count..");
+                   
+                    for(int i = 1; i < giantArrayLevelCount.length; i++){
                         giantAvlLevelCount.insertIter(giantArrayLevelCount[i]);
                     }
-                    final long levelCountEndTime = System.currentTimeMillis();
-                    System.out.println("Total time Level Count = " + (levelCountEndTime - levelCountStartTime));
-                    System.out.println("Total level binary tree = " + giantBstLevelCount.levelCounter);
-                    System.out.println("Total level count avl tree = "+ giantAvlLevelCount.levelCounter);
+                    System.out.println(" Total level count avl tree = "+ giantAvlLevelCount.levelCounter);
+
+                    for(int i = 1; i < giantArrayLevelCount.length; i++){
+                        giantBstLevelCount.insertIter(giantArrayLevelCount[i]);
+                    }
+                    System.out.println(" Total level binary tree = " + giantBstLevelCount.levelCounter);
+                    System.out.println(" ");
+
                 }
                 
                 if(questionSixPartC){
@@ -133,15 +182,18 @@ public class Main{
                     AVLtree avl = new AVLtree(sortedArray[0]);
                     BinarySearchTree bst = new BinarySearchTree(sortedArray[0]);
 
-                    final long startTime = System.currentTimeMillis();
-                    for(int i = 1; i < sortedArray.length -1; i++){
-                        bst.insertIter(sortedArray[i]);
-                        //avl.insertIter(sortedArray[i]);
+                    System.out.println("Printing results, question 6 Part C...");
+                    for(int i = 1; i < sortedArray.length; i++){
+                        avl.insertIter(sortedArray[i]);
                     }
-                    final long endTime = System.currentTimeMillis();
-                    System.out.println(" Total time : " + (endTime - startTime));
+                    System.out.println(" Total levels avl : " + avl.levelCounter);
+                    for(int i = 1; i < sortedArray.length; i++){
+                        bst.insertIter(sortedArray[i]);
+                    }
+                    
                     System.out.println(" Total Levels bst : " + bst.levelCounter);
-                    //System.out.println(" Total Levels avl : " + avl.levelCounter);
+                    System.out.println(" ");
+    
                 }
                 
             }
@@ -197,8 +249,6 @@ public class Main{
                 System.out.println("Root data : " + myAvLtree.root.data);
                 System.out.println("Root height : " + myAvLtree.root.height);
                 System.out.println("Root balance factor : " + myAvLtree.root.balanceFactor);
-                //System.out.println("Root data = " + myAvLtree.root.data);
-                //System.out.println("Root parent : " + myAvLtree.root.parent);
                 myAvLtree.inorder(myAvLtree.root);
                 System.out.println(" ");
                 

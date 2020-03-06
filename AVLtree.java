@@ -12,12 +12,7 @@ public class AVLtree{
     public void insertIter(int data){
         Node cur = this.root;
         boolean notInserted = true;
-        if(this.root == null){
-            Node root = new Node(data);
-            root.parent = null;
-            this.root = root;
-            notInserted = false;
-        }
+      
         while(notInserted){
             //traverse tree
             if(cur.data < data){
@@ -44,9 +39,9 @@ public class AVLtree{
                     cur = cur.right;
                 }
             }
+
             if(cur.data > data){
                 //go left
-
                 //added for question 6
                 this.levelCounter = this.levelCounter + 1;
                 
@@ -78,6 +73,7 @@ public class AVLtree{
             root.balanceFactor = calculateBF(root);
             if(root.balanceFactor >= 2 || root.balanceFactor <= -2){
                 rotateNode(root);
+                break; //Need to break out after rotate no need to calculate heights and bf
             }
             root = root.parent;
         }
@@ -119,15 +115,12 @@ public class AVLtree{
             leftRightRotation(cur);
         }else if( cur.balanceFactor >= 2 && cur.left.balanceFactor == 1){
             //needs Right rotation
-            //System.out.println("CALLING RIGHT ROTATION");
             rightRotation(cur);
         }else if(cur.balanceFactor <= -2 && cur.right.balanceFactor == 1){
             //needs Right-Left rotation
-            //System.out.println("CALLING RIGHT LEFT ROTAION");
             rightLeftRoatation(cur);
         }else if(cur.balanceFactor <= -2 && cur.right.balanceFactor == -1){
             // needs Left rotation
-            //System.out.println("CALLING LEFT ROTATION");
             leftRotation(cur);
         }
        
@@ -135,28 +128,24 @@ public class AVLtree{
 
     private void rightRotation(Node cur){
         Node next = cur.left;
-        Node a, b, c, treeZero, treeOne, treeTwo, treeThree;
-        int curData = cur.data;
+        Node a, b, c, treeTwo;
 
         //Set up nodes for manipulation, store subtrees that need to be moved
-        c = cur;
+        a = cur;
         b = next;
-        a = next.left;
-        treeZero = a.left;
-        treeOne = a.right;
+        c = next.left;
         treeTwo = b.right;
-        treeThree = c.right;
 
         //moving nodes for rotation
         b.parent = cur.parent;
-        b.right = c;
-        b.left = a;
-        a.left = treeThree;
-        a.right = treeTwo;
-        c.left = treeOne;
-        c.right = treeZero;
+        b.right = a;
+        b.left = c; //redundant
+        a.left = treeTwo;
+        if(treeTwo != null){
+            treeTwo.parent = a;
+        }
         a.parent = b;
-        c.parent = b;
+        c.parent = b; //redundant
 
         //Check if rotation happened on root
         Node parent = b.parent;
@@ -166,7 +155,7 @@ public class AVLtree{
 
         }else{
             //rotation did NOT occur on the root, must find if cur is a left or right child
-            if(parent.left != null && parent.left.data == curData){
+            if(parent.data > b.data){
                 //cur was a left child, we need to update the parent to point at new rotated node
                 parent.left = b;
             }else{
@@ -176,13 +165,13 @@ public class AVLtree{
         }
 
         //Need to update heights and balance factors after performing rotations
-        c.height = calculateHeight(c);
-        c.balanceFactor = calculateBF(c);
+        c.height = calculateHeight(c); //redundant
+        c.balanceFactor = calculateBF(c); //redundant
         a.height = calculateHeight(a);
         a.balanceFactor = calculateBF(a);
         b.height = calculateHeight(b);
         b.balanceFactor = calculateBF(b);
-
+        
         //Need to update all parents since we performed a rotation
         while(parent != null){
 
@@ -190,33 +179,31 @@ public class AVLtree{
             parent.height = calculateHeight(parent);
             parent.balanceFactor = calculateBF(parent);
             parent = parent.parent;
-        }   
 
+        }   
+        
     }
 
     private void leftRotation(Node cur){
         Node next = cur.right;
-        int curData = cur.data;
-        Node a, b, c, treeZero, treeOne, treeTwo, treeThree;
+        Node a, b, c, treeTwo;
         //Needs left rotation
         a = cur;
         b = next;
         c = next.right;
-        treeZero = a.left;
-        treeOne = b.left;
-        treeTwo = c.left;
-        treeThree = c.right;
+        treeTwo = b.left;
+        
 
         //got nodes in right positions now rotate 
         b.parent = cur.parent;
         b.right = c;
         b.left = a;
-        c.parent = b;
-        c.right = treeThree;
-        c.left = treeTwo;
+        a.right = treeTwo;
+        if(treeTwo != null){
+            treeTwo.parent = a;
+        }
         a.parent = b;
-        a.left = treeZero;
-        a.right = treeOne;
+        c.parent = b;
 
         //Check if rotation took place on the root
         Node parent = b.parent;
@@ -226,7 +213,7 @@ public class AVLtree{
 
         }else{
             //rotation did NOT occur on the root, must find if cur is a left or right child
-            if(parent.left != null && parent.left.data == curData){
+            if(parent.data > b.data){
                 //cur was a left child, we need to update the parent to point at new rotated node
                 parent.left = b;
             }else{
@@ -254,39 +241,44 @@ public class AVLtree{
 
     private void rightLeftRoatation(Node cur){
         Node next = cur.right;
-        Node a, b, c, subtreeOne, subtreeTwo;
-        int curData = cur.data;
+        Node a, b, c, subtreeThree, subtreeTwo;
 
         //Set up nodes for manipulation, store the subtrees that need to be moved
         a = cur;
-        c = next;
-        b = next.left;
-        subtreeOne = b.left;
-        subtreeTwo = b.right;
+        b = next;
+        c = next.left;
+        subtreeTwo = c.left;
+        subtreeThree = c.right;
         
         //moving nodes around to rotate
-        b.parent = cur.parent;
-        b.left = a;
-        b.right = c;
-        a.right = subtreeOne;
-        c.left = subtreeTwo;
-        a.parent = b;
-        c.parent = b;
+        c.parent = cur.parent;
+        c.right = b;
+        c.left = a;
+        a.right = subtreeTwo;
+        if(subtreeTwo != null){
+            subtreeTwo.parent = a;
+        }
+        a.parent = c;
+        b.left = subtreeThree;
+        if(subtreeThree != null){
+            subtreeThree.parent = b;
+        }
+        b.parent = c;
 
         //checking if rotation happened on root 
-        Node parent = b.parent;
+        Node parent = c.parent;
         
         if(parent == null){
             //rotation on node need to update
-            this.root = b;
+            this.root = c;
         }else{
             //rotation did not happen on the root node
-            if(parent.left != null && parent.left.data == curData){
+            if(parent.data > c.data){
                 //cur was a left child, we need to update the parent to point at new rotated node
-                parent.left = b;
+                parent.left = c;
             }else{
                 //b must be a right child 
-                parent.right = b;
+                parent.right = c;
             }
         }
 
@@ -311,39 +303,44 @@ public class AVLtree{
     private void leftRightRotation(Node cur){
         //System.out.println("IN LEFT RIGHT ROTATION");
         Node next = cur.left;
-        Node a, b, c, subtreeTwo, subtreeOne;
-        int curData = cur.data;
+        Node a, b, c, subtreeTwo, subtreeThree;
 
         //Set up nodes for manipulation, store subtrees that need to be moved
-        c = cur;
-        a = next;
-        b = next.right;
-        subtreeTwo = b.left;
-        subtreeOne = b.right;
+        a = cur;
+        b = next;
+        c = next.right;
+        subtreeTwo = c.left;
+        subtreeThree = c.right;
 
         //Moving nodes around to rotate
-        b.parent = cur.parent;
-        b.left = a;
-        b.right = c;
-        a.right = subtreeTwo;
-        c.left = subtreeOne;
-        c.parent = b;
-        a.parent = b;
+        c.parent = cur.parent;
+        c.left = b;
+        c.right = a;
+        a.left = subtreeThree;
+        if(subtreeThree != null){
+            subtreeThree.parent = a;
+        }
+        b.right = subtreeTwo;
+        if(subtreeTwo != null){
+            subtreeTwo.parent = b;
+        }
+        a.parent = c;
+        b.parent = c;
 
         //Check if rotation took place on the root
-        Node parent = b.parent;
+        Node parent = c.parent;
         if(parent == null){
             //rotation on root, update.
-            this.root = b;
+            this.root = c;
 
         }else{
             //rotation did NOT occur on the root, must find if cur is a left or right child
-            if(parent.left != null && parent.left.data == curData){
+            if(parent.data > c.data){
                 //cur was a left child, we need to update the parent to point at new rotated node
-                parent.left = b;
+                parent.left = c;
             }else{
                 //b must be a right child 
-                parent.right = b;
+                parent.right = c;
             }
         }
         
@@ -529,6 +526,45 @@ public class AVLtree{
         postOrder(root.right);
         System.out.print(root.data + " ");
     }
+
+    public void printLevelOrder(Node root){
+         // Base Case 
+         if(root == null) 
+         return; 
+       
+        // Create an empty queue for level order tarversal 
+        Queue<Node> q =new LinkedList<Node>(); 
+        
+        // Enqueue Root and initialize height 
+        q.add(root); 
+        
+        
+        while(true) 
+        { 
+            
+            // nodeCount (queue size) indicates number of nodes 
+            // at current level. 
+            int nodeCount = q.size(); 
+            if(nodeCount == 0) 
+                break; 
+            
+            // Dequeue all nodes of current level and Enqueue all 
+            // nodes of next level 
+            while(nodeCount > 0) 
+            { 
+                Node node = q.peek(); 
+                System.out.print(node.data + " "); 
+                q.remove(); 
+                if(node.left != null) 
+                    q.add(node.left); 
+                if(node.right != null) 
+                    q.add(node.right); 
+                nodeCount--; 
+            } 
+            System.out.println("");
+        } 
+    }
+
     
     
 }
