@@ -1,0 +1,3 @@
+5b.) My computer was able to handle the random array of 10000 inserts. The BST outperformed the AVL which was surprising. 
+    One reason we would come across problems with the BST recursive inserts is from all the stack space being used from each recursive method call. This takes up a lot of implicit space and
+    can create a stack overflow error. 
